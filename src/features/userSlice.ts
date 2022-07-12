@@ -1,43 +1,29 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../app/store';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from "../app/store";
+interface USER {
+  displayName: string;
+  photoUrl: string;
+}
 
 export const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState: {
-    user: {
-      user: {uid: "", photoUrl: "", displayName: ""},
-    }
+    user: { uid: "", photoUrl: "", displayName: "" },
   },
-  // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
     login: (state, action) => {
       state.user = action.payload;
     },
-    decrement: (state) => {
-      state.value -= 1;
+    logout: (state) => {
+      state.user = { uid: "", photoUrl: "", displayName: "" };
     },
-    incrementByAmount: (state, action: PayloadAction<number>) => {
-      state.value += action.payload;
+    updateUserProfile: (state, action: PayloadAction<USER>) => {
+      state.user.displayName = action.payload.displayName;
+      state.user.photoUrl = action.payload.photoUrl;
     },
   },
 });
 
-export const { increment, decrement, incrementByAmount } = counterSlice.actions;
-
-// The function below is called a selector and allows us to select a value from
-// the state. Selectors can also be defined inline where they're used instead of
-// in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
-export const selectCount = (state: RootState) => state.counter.value;
-
-// We can also write thunks by hand, which may contain both sync and async logic.
-// Here's an example of conditionally dispatching actions based on current state.
-export const incrementIfOdd =
-  (amount: number): AppThunk =>
-  (dispatch, getState) => {
-    const currentValue = selectCount(getState());
-    if (currentValue % 2 === 1) {
-      dispatch(incrementByAmount(amount));
-    }
-  };
-
-export default counterSlice.reducer;
+export const { login, logout, updateUserProfile } = userSlice.actions;
+export const selectUser = (state: RootState) => state.user.user;
+export default userSlice.reducer;
