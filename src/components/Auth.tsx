@@ -86,7 +86,21 @@ const Auth: React.FC = () => {
   const [username, setUsername] = useState("");
   const [avatarImage, setAvatarImage] = useState<File | null>(null);
   const [isLogin, setIsLogin] = useState(true);
+  const [openModal, setOpenModal] = React.useState(false);
+  const [resetEmail, setResetEmail] = useState("")
 
+  const sendResetEmail = async (e: React.MouseEvent<HTMLLIElement>) => {
+    await auth
+      .sendPasswordResetEmail(resetEmail)
+      .then(() => {
+        setOpenModal(false);
+        setResetEmail("");
+      })
+      .catch((err) => {
+        alert(err.message)
+        setResetEmail("")
+      })
+  }
   const onChangeImageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files![0]) {
       setAvatarImage(e.target.files![0])
@@ -240,6 +254,7 @@ const Auth: React.FC = () => {
               <Grid item xs>
                 <span
                   className={styles.login_reset}
+                  onClick={() => setOpenModal(true)}
                 >
                   Forgot password ?
                 </span>
@@ -265,6 +280,27 @@ const Auth: React.FC = () => {
               SignIn with Google
             </Button>
           </form>
+          <Modal open={openModal} onClose={() => setOpenModal(false)}>
+            <div style={getModalStyle()} className={classes.modal}>
+              <div className={styles.login_modal}>
+                <TextField
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  type="email"
+                  name="email"
+                  label="Reset E-mail"
+                  value={resetEmail}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setResetEmail(e.target.value);
+                  }}
+                />
+                <IconButton>
+                  <SendIcon />
+                </IconButton>
+              </div>
+            </div>
+          </Modal>
         </div>
       </Grid>
     </Grid>
