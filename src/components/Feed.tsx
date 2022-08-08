@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { auth } from "../firebase"
+import styles from "./Feed.module.css";
+import { db } from "../firebase";
 import TweetInput from "./TweetInput";
+// import Post from "./Post";
 
 const Feed = () => {
   return (
-    <div>
+    <div className={styles.feed}>
       <TweetInput/>
-      <button onClick={() => auth.signOut()}></button>
+      <button></button>
     </div>
   )
 }
