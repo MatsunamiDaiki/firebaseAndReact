@@ -40,7 +40,9 @@ const Feed: React.FC = () => {
   return (
     <div className={styles.feed}>
       <TweetInput/>
-      {posts.map((post) => (
+      {posts.length && (
+        <>
+          {posts.map((post) => (
             <Post
               key={post.id}
               postId={post.id}
@@ -51,7 +53,8 @@ const Feed: React.FC = () => {
               username={post.username}
             />
           ))}
-
+        </>
+      )}
     </div>
   )
 }
