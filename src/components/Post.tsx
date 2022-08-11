@@ -39,11 +39,23 @@ const useStyles = makeStyles((theme) => ({
 
 const Post: React.FC<PROPS> = (props) => {
   const classes = useStyles();
+  const {postId,avatar,image,text,timestamp,username} = props
   const user = useSelector(selectUser);
   const [comment, setComment] = useState("");
+  const [comments, setComments] = useState<COMMENT[]>([
+    {
+      id: "",
+      avatar: "",
+      text: "",
+      username: "",
+      timestamp: null,
+    },
+  ]);
+
+
   const newComment = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    db.collection("posts").doc(props.postId).collection("comments").add({
+    db.collection("posts").doc(postId).collection("comments").add({
       avatar: user.photoUrl,
       text: comment,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
@@ -54,27 +66,29 @@ const Post: React.FC<PROPS> = (props) => {
   return (
     <div className={styles.post}>
       <div className={styles.post_avatar}>
-        <Avatar src={props.avatar} />
+        <Avatar src={avatar} />
       </div>
       <div className={styles.post_body}>
         <div>
           <div className={styles.post_header}>
             <h3>
-              <span className={styles.post_headerUser}>@{props.username}</span>
+              <span className={styles.post_headerUser}>@{username}</span>
               <span className={styles.post_headerTime}>
-                {new Date(props.timestamp?.toDate()).toLocaleString()}
+                {new Date(timestamp?.toDate()).toLocaleString()}
               </span>
             </h3>
           </div>
           <div className={styles.post_tweet}>
-            <p>{props.text}</p>
+            <p>{text}</p>
           </div>
         </div>
-        {props.image && (
+        {image && (
           <div className={styles.post_tweetImage}>
-            <img src={props.image} alt="tweet" />
+            <img src={image} alt="tweet" />
           </div>
         )}
+
+        
         <form onSubmit={newComment}>
           <div className={styles.post_form}>
             <input
