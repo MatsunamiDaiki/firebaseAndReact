@@ -1,8 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import styles from "./Feed.module.css";
 import { db } from "../firebase";
 import TweetInput from "./TweetInput";
 import Post from "./Post";
+import _orderBy from 'lodash/orderBy'
+
+type OrderType = 'asc' | 'desc'
+type Key = 'text'
+
+interface currentSort {
+  order: OrderType
+  key: Key
+}
 
 const Feed: React.FC = () => {
   const [posts, setPosts] = useState([
@@ -15,6 +24,20 @@ const Feed: React.FC = () => {
       username: "",
     },
   ]);
+  const [currentSort, setCurrentSort] = useState<currentSort>({
+    order: 'asc',
+    key: 'text'
+  })
+
+  const requestSort = (sortKey: Key) => {
+    const selectedOrder = currentSort.order === 'asc' ? 'desc' : 'asc'
+    setCurrentSort({order: selectedOrder, key: sortKey})
+  }
+
+  const sortedPosts = useMemo(() => {
+    const targetPosts = [...posts]
+    return _orderBy(targetPosts, currentSort.key, currentSort.order)
+  },[currentSort])
 
   useEffect(() => {
     const unSub = db
@@ -40,9 +63,10 @@ const Feed: React.FC = () => {
   return (
     <div className={styles.feed}>
       <TweetInput/>
+      <button onClick={() => requestSort('text')}>並び替え</button>
       {posts.length && (
         <>
-          {posts.map((post) => (
+          {sortedPosts.map((post) => (
             <Post
               key={post.id}
               postId={post.id}
