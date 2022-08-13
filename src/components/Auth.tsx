@@ -13,26 +13,14 @@ import {
   Grid,
   Typography,
   makeStyles,
-  Modal,
   IconButton,
   Box,
 } from "@material-ui/core";
-
-import SendIcon from "@material-ui/icons/Send";
 import CameraIcon from "@material-ui/icons/Camera";
 import EmailIcon from "@material-ui/icons/Email";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-function getModalStyle() {
-  const top = 50;
-  const left = 50;
-
-  return {
-    top: `${top}%`,
-    left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`,
-  };
-}
+import ForgotModal from "./ForgotModal";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -86,8 +74,12 @@ const Auth: React.FC = () => {
   const [username, setUsername] = useState("");
   const [avatarImage, setAvatarImage] = useState<File | null>(null);
   const [isLogin, setIsLogin] = useState(true);
-  const [openModal, setOpenModal] = React.useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const [resetEmail, setResetEmail] = useState("")
+
+  const onCloseModal = () => {
+    setOpenModal(!openModal)
+  }
 
   const sendResetEmail = async (e: React.MouseEvent<HTMLLIElement>) => {
     await auth
@@ -280,27 +272,14 @@ const Auth: React.FC = () => {
               SignIn with Google
             </Button>
           </form>
-          <Modal open={openModal} onClose={() => setOpenModal(false)}>
-            <div style={getModalStyle()} className={classes.modal}>
-              <div className={styles.login_modal}>
-                <TextField
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  type="email"
-                  name="email"
-                  label="Reset E-mail"
-                  value={resetEmail}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setResetEmail(e.target.value);
-                  }}
-                />
-                <IconButton>
-                  <SendIcon />
-                </IconButton>
-              </div>
-            </div>
-          </Modal>
+          {openModal &&
+            <ForgotModal
+              isOpen={openModal}
+              email={resetEmail}
+              setResetEmail= {setResetEmail}
+              onCloseModal={onCloseModal}
+            />
+          }
         </div>
       </Grid>
     </Grid>
